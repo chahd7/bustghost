@@ -96,6 +96,10 @@ The DistanceSense() method helps the players see how close they are to the hidde
 Inference: After determining the likelihood based on the sensed color, the method updates the probabilities for each cell using the updatePosteriorGhostLocationProbabilities method. In this method, the likelihood obtained from the joint probability table is used to update the probability for each cell, multiplying the current probability by the likelihood. Here, we make usage of the Bayesian inference as follows: Pt(G=Li) = Pt(G=Li/ S=Color at location Li)= P(S=Color at location Li/ / G=Li) * Pt1 (G=Lj)
 With P0 (G=Lj) is a uniform distribution (Initial prior probability) And P(S=Color at location Li/ / G=Li) = P(S=Color/ distance=0).
 
+![image](https://github.com/chahd7/bustghost/assets/125460075/f75dce23-ba17-44d6-aa62-10a3ba105843)
+
+We loop through the grid cells by using np.ndindex(self.grid_size) which generates a pair of (i,j) for each cell. After that, we calculate the distance between the location and the cell where the color was sensed and using this distance, the function retreaves a distance_key and then looks up for the likelihood of observing the sensed_color we generated from that distance using the conditional table S we have defined previously. The probability of the ghost being in each cell is then updated by multiplying the probabilities we have in self.probabilities[(i, j)] by the like likelihood of observing the sensed color at that distance, applying therefore Bayesian Inferance and updating the belief about where the ghost is depending on the new evidence. Finally, we normalize the entire probability distribution to make sure that their sum equals to one. We do this by dividing each cell’s updated probability by the sum of all updated probabilities. 
+
 
 
 
