@@ -100,6 +100,88 @@ With P0 (G=Lj) is a uniform distribution (Initial prior probability) And P(S=Col
 
 We loop through the grid cells by using np.ndindex(self.grid_size) which generates a pair of (i,j) for each cell. After that, we calculate the distance between the location and the cell where the color was sensed and using this distance, the function retreaves a distance_key and then looks up for the likelihood of observing the sensed_color we generated from that distance using the conditional table S we have defined previously. The probability of the ghost being in each cell is then updated by multiplying the probabilities we have in self.probabilities[(i, j)] by the like likelihood of observing the sensed color at that distance, applying therefore Bayesian Inferance and updating the belief about where the ghost is depending on the new evidence. Finally, we normalize the entire probability distribution to make sure that their sum equals to one. We do this by dividing each cell’s updated probability by the sum of all updated probabilities. 
 
+V. Implementation of the Direction Sensors:
+
+The direction sensor provides valuable information to the player, helping them narrow down the ghost's location and strategize their bust attempts. By increasing the probability of the ghost being in a specific direction based on the player's position, the sensor refines the initial uniform probability distribution.
+
+“Functionality”
+- Initial Distribution: All directions (north, south, east, west) have an equal probability (0.25). This represents a lack of prior knowledge about the ghost's location
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/31a86a4d-d19f-46a8-a681-37107ab4df0d)
+
+- Conditional Distribution Based on Relative Position: The DirectionSense function takes the player's current cell coordinates as input and calculates the relative displacement (difference in x and y coordinates) between the player's position and the ghost's location.
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/df11163b-6040-4538-9f32-9e80feaaa483)
+
+Based on this displacement, the function determines the most likely direction (north, south, east, or west) the ghost resides in:
+• Positive x-displacement suggests the ghost is to the east, and vice versa.
+• Positive y-displacement suggests the ghost is to the north, and vice versa.
+The function then adjusts the initial uniform probabilities for each direction. It increases the probability in the direction corresponding to the calculated displacement and decreases the probability in the opposite direction. To account for uncertainty, the adjustments are not absolute but rather nudge the probabilities in the favoured direction.
+*Finally, the function normalizes the probabilities to ensure they sum to 1 and performs a random selection based on the updated probability distribution.
+
+“Integration with Game Mechanics”
+
+• A button (DIRECTION) is included in the game UI to activate the direction sensor.
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/785b7d58-c979-47a0-a0d9-6b725e62b140)
+
+• Clicking this button triggers the activate_direction_sensor function. (This function updates the game state to indicate that the direction sensor is active and displays a message informing the player.)
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/42a9c449-08c6-4ba5-bf16-6d579bcc3853)
+
+• Clicking on a cell after activating the sensor calls a call back function (display_sensed_direction).
+• This call back function retrieves the sensed direction using DirectionSense and displays it along with the clicked cell coordinates in the message label.
+
+Pt(G=Li)=Pt(G=Li∣Scolor at location Li,Sdirection at location Li)×Pt−1(G=Lj)
+Where:
+• Pt(G=Li∣Scolor at location Li,Sdirection at location Li) represents the combined probability of the ghost being at location Li given the sensed color and direction at that location.
+• Pt−1(G=Lj) represents the prior probability of the ghost being at location Lj.
+
+In this implementation, the updatePosteriorGhostLocationProbabilities() function incorporates evidence from the sensed color, adjusting the probabilities for each location based on the likelihood of the observed color. On the other hand, the update_probabilities_based_on_direction function complements this by considering the sensed
+direction, further refining the probabilities by incorporating directional information relative to the player's position. These two operations synergistically refine the posterior probabilities, providing comprehensive inference mechanism for determining the ghost's location. By integrating evidence from both sensors into a unified probabilistic framework, our implementation enhances the accuracy of ghost localization, enriching the gameplay experience with nuanced decision-making based on combined sensor inputs
+
+
+VI. Demo of the project:
+
+Initial UI:
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/630e1b55-4718-48fc-bb35-d4ef285c9c18)
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/294e2a29-76fe-4505-a282-7e388495af0d)
+
+When cell selected: 
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/cc64aa2f-c0f0-4287-af53-69f6cc3a900d)
+
+When the player runs out of credits:
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/2208558f-bb50-4018-bdbb-6bfcfcda9959)
+
+When the cell busted doesn’t contain the ghost:
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/820a5804-2cff-4d05-bbc5-87067b015978)
+
+When the cell busted contains the ghost: 
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/43a117c4-1187-4df7-85f3-e4ca41413790)
+
+Bonus using the direction sensors: 
+
+![image](https://github.com/chahd7/bustghost/assets/125460075/bcc486dc-5f41-455c-9fb1-55a9448242a2)
+
+Link to the video: https://youtu.be/RlYoMjM1ltw?si=NpG97621dU6MDX21
+
+VII. Conclusion:
+
+In summary, our project "Bust the Ghost" effectively utilizes Bayesian inferencing to enhance gameplay dynamics. Through the integration of probabilistic principles, players engage in an immersive experience where sensor readings inform strategic decisions. Key components such as updating probabilities and considering direction enrich the gameplay, offering both entertainment and educational value. Overall, this project effectively demonstrates how players learn to reason probabilistically by analyzing sensor readings and updating their beliefs about the ghost's location. With further development, the game could be expanded to include additional sensor types or more complex ghost movement patterns, creating a richer and more engaging experience.
+
+
+
+
+
+
+
+
 
 
 
